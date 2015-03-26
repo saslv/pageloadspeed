@@ -25,13 +25,20 @@
         <div style="max-height: 300px; overflow-y: scroll; border: 1px solid;">
             <pre id="file-content" style="margin: 0;"></pre>
         </div>
+        <div id="charts">
+
+        </div>
     </div>
 </div>
 
 <script>
-    function draw_charts(){
+    function draw_charts(data){
         $('#results').slideDown();
-    };
+
+        for(var key in data) {
+            $('#charts').append('<p>' + data[key].name + ' (avg ' + data[key].avg + ' ms)' + '</p>');
+        }
+    }
 
     function readSingleFile(e) {
         var file = e.target.files[0];
@@ -42,9 +49,30 @@
         reader.onload = function(e){
             var contents = e.target.result;
             $('#file-content').text(contents);
-            draw_charts();
+            draw_charts(parseResults(contents));
         };
         reader.readAsText(file);
+    }
+
+    function parseResults(input){
+        var lines = input.split('\n');
+        var output = [];
+
+        for(var key in lines){
+            var name_and_values = lines[key].split(' ');
+            var values = name_and_values[1].replace('[', '').replace(']', '').split(',');
+            var sum = 0;
+
+            for(var k in values){
+                sum += parseInt(values[k]);
+            }
+
+            var avg = sum/values.length;
+
+            output.push({'name': name_and_values[0], 'values': name_and_values[1], 'avg': avg});
+        }
+
+        return output;
     }
 
     $('#controls').append('<input type="file" id="file-input">');
