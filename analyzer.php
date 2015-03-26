@@ -11,11 +11,12 @@
         }
 
         .chart .bar{
-            background-color: #f00;
+            background-color: #011;
             height: 100%;
             opacity: 0.5;
             position: absolute;
             top: 0;
+            pointer-events: none;
         }
 
         .chart{
@@ -58,10 +59,11 @@
 
         for(var key in data){
             var val = data[key];
+            var percent = parseFloat(val.avg * 100 / longest);
             $('#charts').append(
                 '<div class="chart">' +
                     val.name + ' (avg ' + val.avg + ' ms)' +
-                    '<div class="bar" style="width: ' + parseFloat(val.avg * 100 / longest) + '%;"></div>' +
+                    '<div class="bar" style="width: ' + percent + '%; opacity: 0.' + getChartOpacity(percent) + ';"></div>' +
                 '</div>'
             );
         }
@@ -100,6 +102,10 @@
         }
 
         return output;
+    }
+
+    function getChartOpacity(percent){
+        return parseInt(percent*60/100);
     }
 
     $('#controls').append('<input type="file" id="file-input">');
