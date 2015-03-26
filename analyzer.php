@@ -9,6 +9,18 @@
             background-color: #000;
             color: #fff;
         }
+
+        .chart .bar{
+            background-color: #f00;
+            height: 100%;
+            opacity: 0.5;
+            position: absolute;
+            top: 0;
+        }
+
+        .chart{
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -35,8 +47,23 @@
     function draw_charts(data){
         $('#results').slideDown();
 
-        for(var key in data) {
-            $('#charts').append('<p>' + data[key].name + ' (avg ' + data[key].avg + ' ms)' + '</p>');
+        var longest = 0;
+
+        for(var key in data){
+            var val = data[key];
+            if(longest < val.avg){
+                longest = val.avg;
+            }
+        }
+
+        for(var key in data){
+            var val = data[key];
+            $('#charts').append(
+                '<div class="chart">' +
+                    val.name + ' (avg ' + val.avg + ' ms)' +
+                    '<div class="bar" style="width: ' + parseFloat(val.avg * 100 / longest) + '%;"></div>' +
+                '</div>'
+            );
         }
     }
 
