@@ -11,16 +11,22 @@
         }
 
         .chart .bar{
-            background-color: #011;
+            background-color: #000;
             height: 100%;
-            opacity: 0.5;
+            /*opacity: 0.5;*/
             position: absolute;
             top: 0;
             pointer-events: none;
+            z-index: -1;
         }
 
         .chart{
             position: relative;
+            z-index: 2;
+        }
+
+        .chart-holder{
+            background-color: #888;
         }
     </style>
 </head>
@@ -45,7 +51,7 @@
 </div>
 
 <script>
-    function draw_charts(data){
+    function draw_charts(data, file_name){
         $('#results').slideDown();
 
         var longest = 0;
@@ -57,13 +63,15 @@
             }
         }
 
+        var chart_holder = $('#charts').append('<div class="chart-holder"><div class="file_name">'+file_name+'</div></div>').find('.chart-holder');
+
         for(var key in data){
             var val = data[key];
             var percent = parseFloat(val.avg * 100 / longest);
-            $('#charts').append(
+            chart_holder.append(
                 '<div class="chart">' +
                     val.name + ' (avg ' + val.avg + ' ms)' +
-                    '<div class="bar" style="width: ' + percent + '%; opacity: 0.' + getChartOpacity(percent) + ';"></div>' +
+                    '<div class="bar" style="width: ' + percent + '%;"></div>' +
                 '</div>'
             );
         }
@@ -77,8 +85,9 @@
         var reader = new FileReader();
         reader.onload = function(e){
             var contents = e.target.result;
+            console.log(e.target);
             $('#file-content').text(contents);
-            draw_charts(parseResults(contents));
+            draw_charts(parseResults(contents), '');
         };
         reader.readAsText(file);
     }
@@ -105,7 +114,7 @@
     }
 
     function getChartOpacity(percent){
-        return parseInt(percent*60/100);
+        return parseInt(percent*0.5+20);
     }
 
     $('#controls').append('<input type="file" id="file-input">');
